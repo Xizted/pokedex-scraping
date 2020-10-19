@@ -3,9 +3,11 @@ const { url } = require("../config/config.json");
 
 const getPokemons = async () => {
   try {
-    const browser = await puppeteer.launch();
+    const browser = await puppeteer.launch({
+      args: ["--no-sandbox", "--disable-setuid-sandbox"],
+    });
     const page = await browser.newPage();
-     page.setDefaultNavigationTimeout(100000);
+    page.setDefaultNavigationTimeout(100000);
     await page.goto(`${url}/`, {
       waitUntil: "networkidle0",
     });
@@ -38,7 +40,9 @@ const getPokemons = async () => {
 
 const getPokemon = async (name) => {
   try {
-    const browser = await puppeteer.launch();
+    const browser = await puppeteer.launch({
+      args: ["--no-sandbox", "--disable-setuid-sandbox"],
+    });
     const page = await browser.newPage();
     page.setDefaultNavigationTimeout(100000);
     await page.goto(`${url}/${name.toLowerCase()}`, {
