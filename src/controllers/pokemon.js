@@ -8,7 +8,7 @@ const getPokemons = async () => {
       headless: true,
     });
     const page = await browser.newPage();
-    page.setDefaultNavigationTimeout(300000);
+    // page.setDefaultNavigationTimeout(300000);
     await page.goto(`${url}/`, {
       waitUntil: "networkidle0",
     });
@@ -47,7 +47,7 @@ const getPokemon = async (name) => {
       args: ["--no-sandbox", "--disable-setuid-sandbox"],
     });
     const page = await browser.newPage();
-    page.setDefaultNavigationTimeout(100000);
+    // page.setDefaultNavigationTimeout(100000);
     await page.goto(`${url}/${name.toLowerCase()}`, {
       waitUntil: "networkidle0",
     });
