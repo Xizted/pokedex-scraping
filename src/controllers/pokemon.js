@@ -5,7 +5,7 @@ const getPokemons = async () => {
   try {
     const browser = await puppeteer.launch();
     const page = await browser.newPage();
-    // page.setDefaultNavigationTimeout(300000);
+     page.setDefaultNavigationTimeout(100000);
     await page.goto(`${url}/`, {
       waitUntil: "networkidle0",
     });
@@ -40,7 +40,7 @@ const getPokemon = async (name) => {
   try {
     const browser = await puppeteer.launch();
     const page = await browser.newPage();
-    // page.setDefaultNavigationTimeout(200000);
+    page.setDefaultNavigationTimeout(100000);
     await page.goto(`${url}/${name.toLowerCase()}`, {
       waitUntil: "networkidle0",
     });
