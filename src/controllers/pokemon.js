@@ -5,12 +5,15 @@ const getPokemons = async () => {
   try {
     const browser = await puppeteer.launch({
       args: ["--no-sandbox", "--disable-setuid-sandbox"],
+      headless: true,
     });
     const page = await browser.newPage();
-    // page.setDefaultNavigationTimeout(100000);
+    page.setDefaultNavigationTimeout(300000);
     await page.goto(`${url}/`, {
       waitUntil: "networkidle0",
     });
+    await page.waitForSelector("a#loadMore");
+    await page.click("a#loadMore");
     const pokemons = await page.evaluate(() => {
       const idPokemons = document.querySelectorAll(".pokemon-info > .id");
       const namePokemons = document.querySelectorAll(".pokemon-info > h5");
@@ -44,7 +47,7 @@ const getPokemon = async (name) => {
       args: ["--no-sandbox", "--disable-setuid-sandbox"],
     });
     const page = await browser.newPage();
-    // page.setDefaultNavigationTimeout(100000);
+    page.setDefaultNavigationTimeout(100000);
     await page.goto(`${url}/${name.toLowerCase()}`, {
       waitUntil: "networkidle0",
     });
