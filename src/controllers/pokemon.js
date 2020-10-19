@@ -32,7 +32,7 @@ const getPokemons = async () => {
     await browser.close();
     return pokemons;
   } catch (e) {
-    throw new Error(e);
+    return e;
   }
 };
 
@@ -83,7 +83,7 @@ const getPokemon = async (name) => {
     await browser.close();
     return pokemon;
   } catch (e) {
-    throw new Error(e);
+    return e;
   }
 };
 
