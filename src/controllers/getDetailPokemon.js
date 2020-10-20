@@ -38,7 +38,7 @@ const getDetailPokemon = async (id) => {
     await page.click(
       "section.section.pokedex-results.overflow-visible > ul > li > figure > a"
     );
-    await page.waitForTimeout(5000);
+    await page.waitForTimeout(4000);
     const pokemon = await page.evaluate(() => {
       const [name, id] = document
         .querySelector(".pokedex-pokemon-pagination-title > div")
