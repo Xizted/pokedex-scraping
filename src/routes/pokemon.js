@@ -41,6 +41,8 @@ app.get("/pokemon/:id", async (req, res) => {
       error: {
         name: e.name,
         message: e.message,
+        fileName: e.fileName,
+        line: e.lineNumber,
       },
     });
   }

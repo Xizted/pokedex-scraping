@@ -19,9 +19,7 @@ const scrapeInfiniteScrollItems = async (
       );
       await page.waitForTimeout(scrollDelay);
     }
-  } catch (e) {
-    throw e;
-  }
+  } catch (e) {}
   return items;
 };
 
@@ -45,22 +43,11 @@ const pokemonsList = () => {
   return pokemonsList;
 };
 
-const getLastPokemon = async (page) => {
-  await page.waitForSelector(".filter-toggle-span");
-  await page.click(".filter-toggle-span > span");
-  await page.waitForSelector("#maxRangeBox");
-  const pokemon = await page.$eval("#maxRangeBox", (input) =>
-    input.getAttribute("value")
-  );
-
-  return parseInt(pokemon);
-};
-
 const getPokemons = async () => {
   try {
     const browser = await puppeteer.launch({
       args: ["--no-sandbox", "--disable-setuid-sandbox"],
-      headless: true,
+      headless: false,
     });
     const page = await browser.newPage();
     await page.setViewport({
@@ -70,22 +57,14 @@ const getPokemons = async () => {
     await page.setUserAgent(
       "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/44.0.2403.157 Safari/537.36"
     );
-    page.setDefaultNavigationTimeout(100000);
     await page.goto(`${url}/`, {
-      waitUntil: "networkidle2",
+      waitUntil: "networkidle0",
+      timeout: 0
     });
-    await page.waitForSelector(
-      "section.section.pokedex-results.overflow-visible > ul > li"
-    );
-    const lastPokemon = await getLastPokemon(page);
     await page.waitForSelector("a#loadMore");
     await page.click("a#loadMore");
-    await page.waitForTimeout(500);
-    const pokemons = await scrapeInfiniteScrollItems(
-      page,
-      pokemonsList,
-      lastPokemon
-    );
+    await page.waitForTimeout(3000);
+    const pokemons = await scrapeInfiniteScrollItems(page, pokemonsList, 893);
 
     await browser.close();
     return pokemons;
