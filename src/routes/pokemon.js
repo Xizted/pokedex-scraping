@@ -1,6 +1,7 @@
 const express = require("express");
 const app = express();
-const { getPokemons, getPokemon } = require("../controllers/pokemon");
+const getPokemons = require("../controllers/getPokemons");
+const getDetailPokemon = require("../controllers/getDetailPokemon");
 
 app.get("/pokemon", async (req, res) => {
   try {
@@ -21,8 +22,8 @@ app.get("/pokemon", async (req, res) => {
 app.get("/pokemon/:id", async (req, res) => {
   try {
     const id = req.params.id;
-
-    const pokemon = await getPokemon(id);
+    const pokemonList = await getPokemons();
+    const pokemon = await getDetailPokemon(id, pokemonList);
 
     res.status(200).json({
       ok: true,
