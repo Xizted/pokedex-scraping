@@ -1,22 +1,41 @@
 const puppeteer = require("puppeteer");
+const getPokemons = require("./getPokemons");
 const { url } = require("../config/config.json");
 
-const getDetailPokemon = async (id, pokemonList) => {
-  const [pokemon] = pokemonList.filter((pokemon) => `#${pokemon.id}` === id);
-
-  if (!pokemon) throw new Error("El id no es valido");
-
+const getDetailPokemon = async (id) => {
   try {
     const browser = await puppeteer.launch({
       args: ["--no-sandbox", "--disable-setuid-sandbox"],
-      headless: true
+      headless: false,
     });
     const page = await browser.newPage();
-    // page.setDefaultNavigationTimeout(100000);
-    await page.goto(`${url}/${pokemon.name.toLowerCase()}`, {
-      waitUntil: "networkidle0",
+    await page.setViewport({
+      width: 1440,
+      height: 900,
     });
-
+    await page.setUserAgent(
+      "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/44.0.2403.157 Safari/537.36"
+    );
+    page.setDefaultNavigationTimeout(100000);
+    await page.goto(`${url}/`, {
+      waitUntil: "networkidle2",
+    });
+    await page.waitForSelector(
+      "section.section.pokedex-results.overflow-visible > ul > li"
+    );
+    await page.waitForSelector("#searchInput");
+    await page.waitForSelector("#search");
+    await page.focus("#searchInput");
+    await page.keyboard.type(id);
+    await page.click("#search");
+    await page.waitForTimeout(3000);
+    await page.waitForSelector(
+      "section.section.pokedex-results.overflow-visible > ul > li > figure > a"
+    );
+    await page.click(
+      "section.section.pokedex-results.overflow-visible > ul > li > figure > a"
+    );
+    await page.waitForTimeout(3000);
     const pokemon = await page.evaluate(() => {
       const [name, id] = document
         .querySelector(".pokedex-pokemon-pagination-title > div")

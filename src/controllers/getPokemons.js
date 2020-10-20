@@ -17,9 +17,11 @@ const scrapeInfiniteScrollItems = async (
       await page.waitForFunction(
         `document.body.scrollHeight > ${previousHeight}`
       );
-      await page.waitFor(scrollDelay);
+      await page.waitForTimeout(scrollDelay);
     }
-  } catch (e) {}
+  } catch (e) {
+    throw e;
+  }
   return items;
 };
 
@@ -43,11 +45,29 @@ const pokemonsList = () => {
   return pokemonsList;
 };
 
+const lastPokemonFunc = async (page) => {
+  await page.waitForSelector("div.custom-select-menu");
+  await page.click("div.custom-select-menu");
+  await page.click('li[data-option-value="numberDesc"]');
+  await page.waitForSelector(
+    "section.section.pokedex-results.overflow-visible > ul > li:nth-child(1)"
+  );
+  const pokemon = await page.$eval(".pokemon-info > .id", (p) =>
+    p.innerText.slice(1)
+  );
+  await page.click("div.custom-select-menu");
+  await page.click('li[data-option-value="numberAsc"]');
+  await page.waitForSelector(
+    "section.section.pokedex-results.overflow-visible > ul > li:nth-child(1)"
+  );
+  return parseInt(pokemon);
+};
+
 const getPokemons = async () => {
   try {
     const browser = await puppeteer.launch({
       args: ["--no-sandbox", "--disable-setuid-sandbox"],
-      headless: true,
+      headless: false,
     });
     const page = await browser.newPage();
     await page.setViewport({
@@ -57,14 +77,22 @@ const getPokemons = async () => {
     await page.setUserAgent(
       "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/44.0.2403.157 Safari/537.36"
     );
-    // page.setDefaultNavigationTimeout(100000);
+    page.setDefaultNavigationTimeout(100000);
     await page.goto(`${url}/`, {
-      waitUntil: "networkidle0",
+      waitUntil: "networkidle2",
     });
+    await page.waitForSelector(
+      "section.section.pokedex-results.overflow-visible > ul > li"
+    );
     await page.waitForSelector("a#loadMore");
     await page.click("a#loadMore");
-    await page.waitFor(10000);
-    const pokemons = await scrapeInfiniteScrollItems(page, pokemonsList, 893);
+    await page.waitForTimeout(500);
+    const lastPokemon = await lastPokemonFunc();
+    const pokemons = await scrapeInfiniteScrollItems(
+      page,
+      pokemonsList,
+      lastPokemon
+    );
 
     await browser.close();
     return pokemons;

@@ -14,7 +14,10 @@ app.get("/pokemon", async (req, res) => {
   } catch (e) {
     res.status(500).json({
       ok: false,
-      e,
+      error: {
+        name: e.name,
+        message: e.message,
+      },
     });
   }
 });
@@ -22,9 +25,11 @@ app.get("/pokemon", async (req, res) => {
 app.get("/pokemon/:id", async (req, res) => {
   try {
     const id = req.params.id;
-    const pokemonList = await getPokemons();
-    const pokemon = await getDetailPokemon(id, pokemonList);
-
+    if (isNaN(parseInt(id)))
+      throw new Error(`ID invalido, el ID debe ser valores numericos`);
+    if (id.length != 3)
+      throw new Error(`ID invalido, el ID debe contener 3 valores numericos`);
+    const pokemon = await getDetailPokemon(id);
     res.status(200).json({
       ok: true,
       mensaje: "Peticion realizada correctamente",
@@ -33,7 +38,10 @@ app.get("/pokemon/:id", async (req, res) => {
   } catch (e) {
     res.status(500).json({
       ok: false,
-      e,
+      error: {
+        name: e.name,
+        message: e.message,
+      },
     });
   }
 });
