@@ -87,7 +87,7 @@ const getPokemons = async () => {
     await page.waitForSelector("a#loadMore");
     await page.click("a#loadMore");
     await page.waitForTimeout(500);
-    const lastPokemon = await lastPokemonFunc();
+    const lastPokemon = await lastPokemonFunc(page);
     const pokemons = await scrapeInfiniteScrollItems(
       page,
       pokemonsList,
