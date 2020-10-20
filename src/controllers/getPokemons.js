@@ -23,6 +23,16 @@ const scrapeInfiniteScrollItems = async (
   return items;
 };
 
+const getLastPokemon = async (page) => {
+  await page.waitForSelector(".filter-toggle-span");
+  await page.click(".filter-toggle-span > span");
+  const pokemon = await page.$eval("#maxRangeBox", (input) =>
+    input.getAttribute("value")
+  );
+
+  return parseInt(pokemon);
+};
+
 const pokemonsList = () => {
   const idPokemons = document.querySelectorAll(".pokemon-info > .id");
   const namePokemons = document.querySelectorAll(".pokemon-info > h5");
@@ -59,12 +69,13 @@ const getPokemons = async () => {
     );
     await page.goto(`${url}/`, {
       waitUntil: "networkidle0",
-      timeout: 0
+      timeout: 0,
     });
+    const lastPokemon = await getLastPokemon(page);
     await page.waitForSelector("a#loadMore");
     await page.click("a#loadMore");
     await page.waitForTimeout(3000);
-    const pokemons = await scrapeInfiniteScrollItems(page, pokemonsList, 893);
+    const pokemons = await scrapeInfiniteScrollItems(page, pokemonsList, lastPokemon);
 
     await browser.close();
     return pokemons;
