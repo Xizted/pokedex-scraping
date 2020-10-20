@@ -75,7 +75,11 @@ const getPokemons = async () => {
     await page.waitForSelector("a#loadMore");
     await page.click("a#loadMore");
     await page.waitForTimeout(3000);
-    const pokemons = await scrapeInfiniteScrollItems(page, pokemonsList, lastPokemon);
+    const pokemons = await scrapeInfiniteScrollItems(
+      page,
+      pokemonsList,
+      lastPokemon
+    );
 
     await browser.close();
     return pokemons;
@@ -84,4 +88,7 @@ const getPokemons = async () => {
   }
 };
 
-module.exports = getPokemons;
+module.exports = {
+  getPokemons,
+  getLastPokemon,
+};

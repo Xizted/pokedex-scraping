@@ -1,6 +1,6 @@
 const express = require("express");
 const app = express();
-const getPokemons = require("../controllers/getPokemons");
+const { getPokemons } = require("../controllers/getPokemons");
 const getDetailPokemon = require("../controllers/getDetailPokemon");
 
 app.get("/pokemon", async (req, res) => {
@@ -27,8 +27,8 @@ app.get("/pokemon/:id", async (req, res) => {
     const id = req.params.id;
     if (isNaN(parseInt(id)))
       throw new Error(`ID invalido, el ID debe ser valores numericos`);
-    if (id.length != 3)
-      throw new Error(`ID invalido, el ID debe contener 3 valores numericos`);
+    if (id.length < 3 || id === "000")
+      throw new Error(`ID invalido, el ID debe contener 3 digitos o ser mayor a 000`);
     const pokemon = await getDetailPokemon(id);
     res.status(200).json({
       ok: true,

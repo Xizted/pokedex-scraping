@@ -1,5 +1,6 @@
 const puppeteer = require("puppeteer");
 const { url } = require("../config/config.json");
+const { getLastPokemon } = require("../controllers/getPokemons");
 
 const getDetailPokemon = async (id) => {
   try {
@@ -19,6 +20,9 @@ const getDetailPokemon = async (id) => {
     await page.goto(`${url}/`, {
       waitUntil: "networkidle2",
     });
+    const lastPokemon = await getLastPokemon(page);
+    if (id > lastPokemon)
+      throw new Error(`El pokemon con el id ${id} no existe`);
     await page.waitForSelector(
       "section.section.pokedex-results.overflow-visible > ul > li"
     );
@@ -34,7 +38,7 @@ const getDetailPokemon = async (id) => {
     await page.click(
       "section.section.pokedex-results.overflow-visible > ul > li > figure > a"
     );
-    await page.waitForTimeout(3000);
+    await page.waitForTimeout(5000);
     const pokemon = await page.evaluate(() => {
       const [name, id] = document
         .querySelector(".pokedex-pokemon-pagination-title > div")
