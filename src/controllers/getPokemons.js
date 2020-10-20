@@ -45,21 +45,14 @@ const pokemonsList = () => {
   return pokemonsList;
 };
 
-const lastPokemonFunc = async (page) => {
-  await page.waitForSelector("div.custom-select-menu");
-  await page.click("div.custom-select-menu");
-  await page.click('li[data-option-value="numberDesc"]');
-  await page.waitForSelector(
-    "section.section.pokedex-results.overflow-visible > ul > li:nth-child(1)"
+const getLastPokemon = async (page) => {
+  await page.waitForSelector(".filter-toggle-span");
+  await page.click(".filter-toggle-span > span");
+  await page.waitForSelector("#maxRangeBox");
+  const pokemon = await page.$eval("#maxRangeBox", (input) =>
+    input.getAttribute("value")
   );
-  const pokemon = await page.$eval(".pokemon-info > .id", (p) =>
-    p.innerText.slice(1)
-  );
-  await page.click("div.custom-select-menu");
-  await page.click('li[data-option-value="numberAsc"]');
-  await page.waitForSelector(
-    "section.section.pokedex-results.overflow-visible > ul > li:nth-child(1)"
-  );
+
   return parseInt(pokemon);
 };
 
@@ -84,14 +77,15 @@ const getPokemons = async () => {
     await page.waitForSelector(
       "section.section.pokedex-results.overflow-visible > ul > li"
     );
+    // const lastPokemon = await getLastPokemon(page);
+    console.log(lastPokemon);
     await page.waitForSelector("a#loadMore");
     await page.click("a#loadMore");
     await page.waitForTimeout(500);
-    const lastPokemon = await lastPokemonFunc(page);
     const pokemons = await scrapeInfiniteScrollItems(
       page,
       pokemonsList,
-      lastPokemon
+      893
     );
 
     await browser.close();
