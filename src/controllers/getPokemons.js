@@ -77,15 +77,14 @@ const getPokemons = async () => {
     await page.waitForSelector(
       "section.section.pokedex-results.overflow-visible > ul > li"
     );
-    // const lastPokemon = await getLastPokemon(page);
-    console.log(lastPokemon);
+    const lastPokemon = await getLastPokemon(page);
     await page.waitForSelector("a#loadMore");
     await page.click("a#loadMore");
     await page.waitForTimeout(500);
     const pokemons = await scrapeInfiniteScrollItems(
       page,
       pokemonsList,
-      893
+      lastPokemon
     );
 
     await browser.close();
