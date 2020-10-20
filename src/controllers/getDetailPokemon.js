@@ -12,7 +12,7 @@ const getDetailPokemon = async (id, pokemonList) => {
       headless: false
     });
     const page = await browser.newPage();
-    // page.setDefaultNavigationTimeout(100000);
+    page.setDefaultNavigationTimeout(100000);
     await page.goto(`${url}/${pokemon.name.toLowerCase()}`, {
       waitUntil: "networkidle0",
     });
