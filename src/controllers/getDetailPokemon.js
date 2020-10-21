@@ -18,7 +18,7 @@ const getDetailPokemon = async (id) => {
     );
     page.setDefaultNavigationTimeout(100000);
     await page.goto(`${url}/`, {
-      waitUntil: "networkidle2",
+      waitUntil: "networkidle0",
     });
     const lastPokemon = await getLastPokemon(page);
     if (id > lastPokemon)
